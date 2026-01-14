@@ -118,7 +118,7 @@ jobs:
       run: |
         docker run -d -p 8080:8080 --name test-app ${{ secrets.DOCKERHUB_USERNAME }}/config_validator_service:latest
         sleep 10
-        curl -f http://localhost:8080 || exit 1
+        curl -f http://localhost:8080/health || exit 1
         docker logs test-app
         docker stop test-app
         docker rm test-app
