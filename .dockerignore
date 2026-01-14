@@ -1,0 +1,12 @@
+
+target/
+.git/
+.mvn/
+mvnw
+mvnw.cmd
+.idea/
+*.class
+*.jar
+*.war
+*.ear
+*.log
