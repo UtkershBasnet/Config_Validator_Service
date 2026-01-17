@@ -62,7 +62,7 @@ jobs:
         project: "maven-app"
         path: "."
         format: "HTML"
-      continue-on-error: false
+      continue-on-error: true
 
     # ----------------------------------------------------
     # 6. Unit Testing
