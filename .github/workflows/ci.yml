@@ -37,7 +37,7 @@ jobs:
     # ----------------------------------------------------
     - name: Run Maven Checkstyle (Linting)
       run: mvn checkstyle:check
-      continue-on-error: true
+      continue-on-error: false
 
     # ----------------------------------------------------
     # 4. SAST – CodeQL
@@ -62,7 +62,7 @@ jobs:
         project: "maven-app"
         path: "."
         format: "HTML"
-      continue-on-error: true
+      continue-on-error: false
 
     # ----------------------------------------------------
     # 6. Unit Testing
