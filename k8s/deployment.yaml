@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: config-validator-service
   namespace: default
-  labels:
-    app: config-validator-service
 spec:
   replicas: 1
   selector:
@@ -17,14 +15,7 @@ spec:
     spec:
       containers:
         - name: config-validator-service
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/config_validator_service:latest
+          image: DOCKER_IMAGE
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"

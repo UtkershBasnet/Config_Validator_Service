@@ -25,11 +25,11 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
+          sed -i "s|DOCKER_IMAGE|${{ secrets.DOCKERHUB_USERNAME }}/config_validator_service:latest|g" k8s/deployment.yaml
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
-          # Force restart to pull new image
           kubectl rollout restart deployment/config-validator-service
-          kubectl rollout status deployment/config-validator-service
+          kubectl rollout status deployment/config-validator-service --timeout=5m
 
   dast-scan:
     needs: deploy
