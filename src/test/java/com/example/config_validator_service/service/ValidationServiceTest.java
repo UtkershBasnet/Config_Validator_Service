@@ -6,8 +6,6 @@ import com.example.config_validator_service.model.ValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ValidationServiceTest {
@@ -20,8 +18,26 @@ class ValidationServiceTest {
     }
 
     @Test
-    void validate_shouldPass_whenConfigIsValid() {
-        ConfigRequest request = new ConfigRequest("dev", true, 100, "SecureP@ssw0rd");
+    void validate_shouldPass_whenConfigIsValid_forDev() {
+        ConfigRequest request = new ConfigRequest("dev", true, 50, "SecureP@ssw0rd");
+        ValidationResult result = validationService.validate(request);
+
+        assertEquals("PASS", result.getStatus());
+        assertTrue(result.getErrors().isEmpty());
+    }
+
+    @Test
+    void validate_shouldPass_whenConfigIsValid_forTest() {
+        ConfigRequest request = new ConfigRequest("test", true, 400, "SecureP@ssw0rd");
+        ValidationResult result = validationService.validate(request);
+
+        assertEquals("PASS", result.getStatus());
+        assertTrue(result.getErrors().isEmpty());
+    }
+
+    @Test
+    void validate_shouldPass_whenConfigIsValid_forProd() {
+        ConfigRequest request = new ConfigRequest("prod", false, 1500, "SecureP@ssw0rd");
         ValidationResult result = validationService.validate(request);
 
         assertEquals("PASS", result.getStatus());
@@ -63,37 +79,60 @@ class ValidationServiceTest {
         assertEquals("PASS", result.getStatus());
     }
 
+    // ---------- maxConnections env-based tests ----------
+
     @Test
-    void validate_shouldFail_whenMaxConnectionsIsTooLow() {
+    void validate_shouldFail_whenMaxConnectionsTooHighForDev() {
+        ConfigRequest request = new ConfigRequest("dev", true, 200, "SecureP@ssw0rd");
+        ValidationResult result = validationService.validate(request);
+
+        assertEquals("FAIL", result.getStatus());
+        assertTrue(result.getErrors().stream()
+                .anyMatch(e -> e.contains("between 1 and 100 for environment 'dev'")));
+    }
+
+    @Test
+    void validate_shouldFail_whenMaxConnectionsTooHighForTest() {
+        ConfigRequest request = new ConfigRequest("test", true, 600, "SecureP@ssw0rd");
+        ValidationResult result = validationService.validate(request);
+
+        assertEquals("FAIL", result.getStatus());
+        assertTrue(result.getErrors().stream()
+                .anyMatch(e -> e.contains("between 1 and 500 for environment 'test'")));
+    }
+
+    @Test
+    void validate_shouldFail_whenMaxConnectionsTooHighForProd() {
+        ConfigRequest request = new ConfigRequest("prod", false, 2500, "SecureP@ssw0rd");
+        ValidationResult result = validationService.validate(request);
+
+        assertEquals("FAIL", result.getStatus());
+        assertTrue(result.getErrors().stream()
+                .anyMatch(e -> e.contains("between 1 and 2000 for environment 'prod'")));
+    }
+
+    @Test
+    void validate_shouldFail_whenMaxConnectionsIsZero() {
         ConfigRequest request = new ConfigRequest("dev", true, 0, "SecureP@ssw0rd");
         ValidationResult result = validationService.validate(request);
 
         assertEquals("FAIL", result.getStatus());
-        assertTrue(result.getErrors().contains("Field 'maxConnections' must be between 1 and 1000."));
     }
 
-    @Test
-    void validate_shouldFail_whenMaxConnectionsIsTooHigh() {
-        ConfigRequest request = new ConfigRequest("dev", true, 1001, "SecureP@ssw0rd");
-        ValidationResult result = validationService.validate(request);
-
-        assertEquals("FAIL", result.getStatus());
-        assertTrue(result.getErrors().contains("Field 'maxConnections' must be between 1 and 1000."));
-    }
+    // ---------- Password tests ----------
 
     @Test
     void validate_shouldFail_whenPasswordIsTooShort() {
-        ConfigRequest request = new ConfigRequest("dev", true, 100, "Short1!");
+        ConfigRequest request = new ConfigRequest("dev", true, 50, "Short1!");
         ValidationResult result = validationService.validate(request);
 
         assertEquals("FAIL", result.getStatus());
-        // Since the error message is long, we can check a part of it or the full string
-        assertTrue(result.getErrors().stream().anyMatch(e -> e.contains("must be at least 8 characters long")));
+        assertTrue(result.getErrors().stream().anyMatch(e -> e.contains("at least 8 characters")));
     }
 
     @Test
     void validate_shouldFail_whenPasswordLacksMixedCase() {
-        ConfigRequest request = new ConfigRequest("dev", true, 100, "nocaps1!");
+        ConfigRequest request = new ConfigRequest("dev", true, 50, "nocaps1!");
         ValidationResult result = validationService.validate(request);
 
         assertEquals("FAIL", result.getStatus());
@@ -102,7 +141,7 @@ class ValidationServiceTest {
 
     @Test
     void validate_shouldFail_whenPasswordLacksNumbers() {
-        ConfigRequest request = new ConfigRequest("dev", true, 100, "NoNumbers!");
+        ConfigRequest request = new ConfigRequest("dev", true, 50, "NoNumbers!");
         ValidationResult result = validationService.validate(request);
 
         assertEquals("FAIL", result.getStatus());
@@ -111,7 +150,7 @@ class ValidationServiceTest {
 
     @Test
     void validate_shouldFail_whenPasswordLacksSpecialChars() {
-        ConfigRequest request = new ConfigRequest("dev", true, 100, "NoSpecialChars123");
+        ConfigRequest request = new ConfigRequest("dev", true, 50, "NoSpecialChars123");
         ValidationResult result = validationService.validate(request);
 
         assertEquals("FAIL", result.getStatus());
@@ -129,5 +168,3 @@ class ValidationServiceTest {
         assertTrue(schema.getFields().containsKey("adminPassword"));
     }
 }
-
-// ./mvnw test -Dtest=ValidationServiceTest

@@ -43,14 +43,42 @@ public class ValidationService {
              }
         }
 
-        // 3. Validate 'maxConnections'
+        // 3. Validate 'maxConnections' (environment-based)
         if (request.getMaxConnections() == null) {
             errors.add("Field 'maxConnections' is required.");
         } else {
-            if (request.getMaxConnections() < 1 || request.getMaxConnections() > 1000) {
-                errors.add("Field 'maxConnections' must be between 1 and 1000.");
+            Integer maxConn = request.getMaxConnections();
+            String env = request.getEnvironment();
+
+            if (env == null) {
+                errors.add("Field 'environment' must be set before validating maxConnections.");
+            } else {
+                int min = 1;
+                int maxAllowed;
+
+                switch (env) {
+                    case ENV_DEV:
+                        maxAllowed = 100;
+                        break;
+                    case ENV_TEST:
+                        maxAllowed = 500;
+                        break;
+                    case ENV_PROD:
+                        maxAllowed = 2000;
+                        break;
+                    default:
+                        maxAllowed = 1000; // fallback safety
+                }
+
+                if (maxConn < min || maxConn > maxAllowed) {
+                    errors.add(String.format(
+                        "Field 'maxConnections' must be between %d and %d for environment '%s'.",
+                        min, maxAllowed, env
+                    ));
+                }
             }
         }
+
 
         // 4. Validate 'adminPassword'
         if (request.getAdminPassword() == null) {
@@ -95,7 +123,7 @@ public class ValidationService {
         fields.put("maxConnections", new SchemaDefinition.FieldDefinition(
                 "Integer",
                 "Allowed connection limit",
-                "Between 1 and 1000"
+                "1-100 in dev, 1-500 in test, 1-2000 in prod"
         ));
         
         fields.put("adminPassword", new SchemaDefinition.FieldDefinition(
