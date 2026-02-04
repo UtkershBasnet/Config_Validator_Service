@@ -162,7 +162,7 @@ class ValidationServiceTest {
         SchemaDefinition schema = validationService.getSchema();
         assertNotNull(schema);
         assertNotNull(schema.getFields());
-        assertTrue(schema.getFields().containsKey("environment"));
+        assertTrue(schema.getFields().containsKey("this is the new updated env for viva"));
         assertTrue(schema.getFields().containsKey("debug"));
         assertTrue(schema.getFields().containsKey("maxConnections"));
         assertTrue(schema.getFields().containsKey("adminPassword"));
