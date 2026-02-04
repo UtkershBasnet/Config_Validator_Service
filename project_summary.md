@@ -5,7 +5,7 @@
 **Project Name:** Config Validator Service with CI/CD Pipeline  
 **Technology Stack:** Java 17, Spring Boot 4.0.1, Maven, Docker, Kubernetes  
 **Infrastructure:** AWS EC2, Self-hosted Kubernetes Cluster  
-**Deployment URL:** http://98.92.245.185:30080
+**Deployment URL:** http://3.80.114.190:30080
 
 ---
 
@@ -117,7 +117,7 @@ Service:
 
 ### AWS EC2 Instance
 - **Instance Type**: Self-hosted Kubernetes cluster
-- **Public IP**: 98.92.245.185
+- **Public IP**: 3.80.114.190
 - **Exposed Port**: 30080
 
 ---
@@ -239,7 +239,7 @@ This project demonstrates:
 
 ### Test Valid Configuration
 ```bash
-curl -X POST http://98.92.245.185:30080/validate-config \
+curl -X POST http://3.80.114.190:30080/validate-config \
   -H "Content-Type: application/json" \
   -d '{
     "environment": "prod",
@@ -251,12 +251,12 @@ curl -X POST http://98.92.245.185:30080/validate-config \
 
 ### Get Schema
 ```bash
-curl http://98.92.245.185:30080/schema
+curl http://3.80.114.190:30080/schema
 ```
 
 ### Health Check
 ```bash
-curl http://98.92.245.185:30080/health
+curl http://3.80.114.190:30080/health
 ```
 
 ---

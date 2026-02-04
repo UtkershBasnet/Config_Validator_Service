@@ -492,10 +492,10 @@ dast-scan:
 
     - name: Wait for service availability
       run: |
-        timeout 60s bash -c 'until curl -sSf http://98.92.245.185:30080/health; do sleep 5; done' || echo "Service reachable check finished"
+        timeout 60s bash -c 'until curl -sSf http://3.80.114.190:30080/health; do sleep 5; done' || echo "Service reachable check finished"
 
     - name: Run ZAP Baseline Scan
-      run: zap-baseline.py -t http://98.92.245.185:30080 -r zap-report.html -I || true
+      run: zap-baseline.py -t http://3.80.114.190:30080 -r zap-report.html -I || true
     
     - name: Upload ZAP Report
       uses: actions/upload-artifact@v4
@@ -510,7 +510,7 @@ dast-scan:
   - Common vulnerability detection (XSS, SQL injection, etc.)
   - Security header validation
   - Cookie security
-- **Target**: Deployed application at `http://98.92.245.185:30080`
+- **Target**: Deployed application at `http://3.80.114.190:30080`
 - **Reporting**: HTML report uploaded as GitHub artifact
 - **Failure Mode**: Non-blocking (informational only)
 
@@ -730,7 +730,7 @@ The deployed service was tested with various configuration scenarios:
 
 #### Test Case 1: Valid Production Configuration
 ```bash
-curl -X POST http://98.92.245.185:30080/validate-config \
+curl -X POST http://3.80.114.190:30080/validate-config \
   -H "Content-Type: application/json" \
   -d '{
     "environment": "prod",
@@ -743,7 +743,7 @@ curl -X POST http://98.92.245.185:30080/validate-config \
 
 #### Test Case 2: Invalid - Debug Enabled in Production
 ```bash
-curl -X POST http://98.92.245.185:30080/validate-config \
+curl -X POST http://3.80.114.190:30080/validate-config \
   -H "Content-Type: application/json" \
   -d '{
     "environment": "prod",
@@ -756,7 +756,7 @@ curl -X POST http://98.92.245.185:30080/validate-config \
 
 #### Test Case 3: Invalid - Weak Password
 ```bash
-curl -X POST http://98.92.245.185:30080/validate-config \
+curl -X POST http://3.80.114.190:30080/validate-config \
   -H "Content-Type: application/json" \
   -d '{
     "environment": "dev",
@@ -769,7 +769,7 @@ curl -X POST http://98.92.245.185:30080/validate-config \
 
 #### Test Case 4: Invalid - Connection Limit Exceeded
 ```bash
-curl -X POST http://98.92.245.185:30080/validate-config \
+curl -X POST http://3.80.114.190:30080/validate-config \
   -H "Content-Type: application/json" \
   -d '{
     "environment": "dev",

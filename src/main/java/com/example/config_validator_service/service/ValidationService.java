@@ -108,7 +108,7 @@ public class ValidationService {
     public SchemaDefinition getSchema() {
         Map<String, SchemaDefinition.FieldDefinition> fields = new HashMap<>();
         
-        fields.put("environment", new SchemaDefinition.FieldDefinition(
+        fields.put("this is the new updated env for viva", new SchemaDefinition.FieldDefinition(
                 "String", 
                 "Execution environment identifier", 
                 "One of: dev, test, prod"
