@@ -167,4 +167,8 @@ class ValidationServiceTest {
         assertTrue(schema.getFields().containsKey("maxConnections"));
         assertTrue(schema.getFields().containsKey("adminPassword"));
     }
+    @Test
+    void getSchema_shouldFail() {
+        assertEquals(1, 0);
+    }
 }
